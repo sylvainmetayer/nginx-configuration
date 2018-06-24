@@ -1,0 +1,40 @@
+map $http_user_agent $log_ua {
+	~Monit 0;
+	default 1; 
+}
+
+server {
+	include includes/listen-https;
+	server_name FQDN_ADDRESS;
+	root /var/www/FQDN_ADDRESS;
+	index index.html;
+
+	include includes/acme-challenge;
+	include includes/common;
+
+	access_log /var/log/nginx/FQDN_ADDRESS.access.log combined if=$log_ua;
+	error_log /var/log/nginx/FQDN_ADDRESS.error.log;
+
+	location /composer.* { deny all; }
+	location /license { deny all; }
+	location *.json { deny all; }
+	location /README.md { deny all; }
+	location /LICENSE { deny all; }
+
+	include includes/ssl-stapling;
+	include includes/ssl-hsts;
+
+	ssl_certificate         /etc/letsencrypt/live/FQDN_ADDRESS/fullchain.pem;
+	ssl_certificate_key     /etc/letsencrypt/live/FQDN_ADDRESS/privkey.pem;
+	ssl_trusted_certificate /etc/letsencrypt/live/FQDN_ADDRESS/chain.pem;
+}
+
+server {
+	include includes/listen-http;
+	include includes/acme-challenge;
+	include includes/common;
+	server_name FQDN_ADDRESS;
+	access_log /var/log/nginx/FQDN_ADDRESS.access.log;
+	error_log /var/log/nginx/FQDN_ADDRESS.error.log;
+    return 301 https://$host$request_uri;
+}

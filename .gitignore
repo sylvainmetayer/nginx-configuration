@@ -1,0 +1,17 @@
+/ssl/
+/sites-enabled/
+/modules-enabled/
+/modules-available/
+/conf.d/
+/snippets/
+/.htpasswd
+/fastcgi_params
+/fastcgi.conf
+/koi-utf
+/koi-win
+/mime.types
+/nginx.conf
+/proxy_params
+/scgi_params
+/uwsgi_params
+/win-utf
